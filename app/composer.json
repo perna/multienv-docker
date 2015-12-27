@@ -1,0 +1,13 @@
+{
+    "name": "bdata/teste",
+    "authors": [
+        {
+            "name": "Fernando Giovanini",
+            "email": "fernando@bdata.it"
+        }
+    ],
+    "require": {
+        "phpunit/phpunit": "^5.1",
+        "monolog/monolog": "^1.17"
+    }
+}

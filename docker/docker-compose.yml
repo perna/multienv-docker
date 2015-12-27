@@ -1,0 +1,45 @@
+# data is a volume-only container for keeping the mysql and magento filesystemproduction
+# volumes in one place.
+data:
+  image: busybox
+  volumes:
+    - ../app/:/usr/share/nginx/html/:rw
+
+mysql:
+  env_file:
+    - ./dev/mysql/mysql.env
+  image: mysql:5.6
+  volumes:
+    - /var/lib/mysql/data/
+    - ./dev/mysql/my.cnf:/etc/mysql/conf.d/my.cnf
+  expose:
+    - "3306:3306"
+
+phpfpm:
+  build: ./dev/phpfpm
+  expose:
+    - 9000
+  ports:
+    - "9010:9010"
+  volumes_from:
+    - data
+  links:
+    - mysql
+
+nginx:
+  image: nginx:1.9.8
+  ports:
+    - "80:80"
+  volumes:
+    - ./dev/nginx/default.conf:/etc/nginx/conf.d/default.conf
+  volumes_from:
+    - data
+  links:
+    - phpfpm
+
+phpmyadmin:
+  image: corbinu/docker-phpmyadmin
+  links:
+    - mysql:mysql
+  ports:
+    - 8181:80
